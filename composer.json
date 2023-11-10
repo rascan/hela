@@ -1,0 +1,41 @@
+{
+    "name": "rascan/hela",
+    "description": ":package_description",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Frank",
+            "email": "franciskisiara@gmail.com",
+            "homepage": "https://hela.rascan.space"
+        }
+    ],
+    "homepage": "https://github.com/rascan/hela",
+    "keywords": ["Laravel", "Hela"],
+    "require": {
+        "illuminate/support": "~9|~10"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "orchestra/testbench": "~7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rascan\\Hela\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Rascan\\Hela\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rascan\\Hela\\HelaServiceProvider"
+            ],
+            "aliases": {
+                "Hela": "Rascan\\Hela\\Facades\\Hela"
+            }
+        }
+    }
+}
