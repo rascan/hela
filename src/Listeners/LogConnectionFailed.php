@@ -2,10 +2,9 @@
 
 namespace Rascan\Hela\Listeners;
 
-use Illuminate\Http\Client\Events\ResponseReceived;
-use Rascan\Hela\Models\Log;
+use Illuminate\Http\Client\Events\ConnectionFailed;
 
-class LogResponseReceived
+class LogConnectionFailed
 {
     /**
      * Handle the event.
@@ -13,13 +12,9 @@ class LogResponseReceived
      * @param  \Illuminate\Auth\Events\Registered  $event
      * @return void
      */
-    public function handle(ResponseReceived $event)
+    public function handle(ConnectionFailed $event)
     {
-        Log::create([
-
-        ]);
-
-        // dd($event->response->getReasonPhrase());
+        dd($event->request);
         // if ($event->user instanceof MustVerifyEmail && ! $event->user->hasVerifiedEmail()) {
         //     $event->user->sendEmailVerificationNotification();
         // }

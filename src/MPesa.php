@@ -2,10 +2,7 @@
 
 namespace Rascan\Hela;
 
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class MPesa
 {
@@ -23,24 +20,12 @@ class MPesa
         $authorizationUrl = $this->configs['base_url'] . "/oauth/v1/generate";
 
         $response = Http::withHeaders([
-            'Authorization' => "Basic D$accessToken",
+            'Authorization' => "Basic $accessToken",
         ])->get($authorizationUrl, [
             'grant_type' => 'client_credentials',
         ]);
 
         return $response->json('access_token');
-
-
-
-        // } catch (ConnectionException $e) {
-
-        //     dd('Connection exception: ', $e->getMessage());
-        //     // Log::withContext()->alert('Something inside so strong');
-        // } catch (RequestException $e) {
-
-        //     dd($e, $e->getMessage(), $e->getCode(), $e->response->getReasonPhrase());
-        //     //user did some weird shit
-        // }
     }
 
     /**

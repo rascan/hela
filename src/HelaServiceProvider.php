@@ -2,11 +2,13 @@
 
 namespace Rascan\Hela;
 
+use Illuminate\Http\Client\Events\ConnectionFailed;
 use Illuminate\Http\Client\Events\ResponseReceived;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 use Rascan\Hela\Facades\MPesa;
+use Rascan\Hela\Listeners\LogConnectionFailed;
 use Rascan\Hela\Listeners\LogResponseReceived;
 use Rascan\Hela\MPesa as MPesaService;
 
@@ -38,7 +40,7 @@ class HelaServiceProvider extends ServiceProvider
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'rascan');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'rascan');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes/web.php');
 
         // Publishing is only necessary when using the CLI.
@@ -63,6 +65,8 @@ class HelaServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/hela.php', 'hela');
 
         Event::listen(ResponseReceived::class, LogResponseReceived::class);
+
+        Event::listen(ConnectionFailed::class, LogConnectionFailed::class);
 
         $this->app->singleton('mpesa', fn () => new MPesaService(config('hela')));
     }

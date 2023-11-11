@@ -1,6 +1,6 @@
 {
     "name": "rascan/hela",
-    "description": ":package_description",
+    "description": "Laravel wrapper aroung Safaricom's Daraja service",
     "license": "MIT",
     "authors": [
         {
@@ -12,6 +12,7 @@
     "homepage": "https://github.com/rascan/hela",
     "keywords": ["Laravel", "Hela"],
     "require": {
+        "php": ">= 8.2",
         "illuminate/support": "~9|~10"
     },
     "require-dev": {
