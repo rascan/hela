@@ -2,40 +2,82 @@
 
 namespace Rascan\Hela;
 
+use Illuminate\Queue\InvalidPayloadException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ItemNotFoundException;
+use Rascan\Hela\Authorize;
+use Rascan\Hela\Exceptions\InvalidConfig;
 
 class MPesa
 {
-    public function __construct(protected array $configs){}
+    use Authorize;
+
+    const LIVE_BASE_URL = 'https://sandbox.safaricom.co.ke';
+    const TEST_BASE_URL = 'https://api.safaricom.co.ke';
+
+    protected $account;
+    protected $service;
+
+    public function __construct(protected array $configs)
+    {
+        $this->account();
+    }
 
     /**
-     * Request an access token to be used to access available APIs
+     * Sets the active MPesa account for subsequent requests
+     *
+     * @param  string  $account
+     * @return self
      */
-    public function authorize ()
+    public function account (string $defaultAccount = null) : self
     {
-        $consumerKey = $this->configs['consumer_key'];
-        $consumerSecret = $this->configs['consumer_secret'];
+        $accountName = $defaultAccount ?: $this->configs['default'] ?? 'sandbox';
 
-        $accessToken = base64_encode("$consumerKey:$consumerSecret");
-        $authorizationUrl = $this->configs['base_url'] . "/oauth/v1/generate";
+        $this->account = $this->configs['accounts'][$accountName] ?? null;
 
-        $response = Http::withHeaders([
-            'Authorization' => "Basic $accessToken",
-        ])->get($authorizationUrl, [
-            'grant_type' => 'client_credentials',
-        ]);
+        if (is_null($this->account)) {
+            throw new \InvalidArgumentException("MPesa account [$accountName] not configured.");
+        }
 
-        return $response->json('access_token');
+        return $this;
+    }
+
+    /**
+     * Returns the base URL for accessing Daraja services
+     *
+     * @return string
+     */
+    public function baseUrl () : string
+    {
+        $environment = $this->account['environment'] ?? 'test';
+
+        if (!in_array($environment, ['test', 'live'])) {
+            throw new \InvalidArgumentException("Environment [$environment] is invalid.");
+        }
+
+        return $environment === 'live' ? MPesa::LIVE_BASE_URL : MPesa::TEST_BASE_URL;
+    }
+
+    /**
+     * Returns the Daraja API service that is being processed
+     *
+     * @return string
+     */
+    public function service () : string
+    {
+        return $this->service;
     }
 
     /**
      * Send a request to available APIs
      */
-    public function __call ($method, $args)
+    public function __call ($service, $args)
     {
-        Http::mpesa();
-        // $serviceName = "App\\Library\\Services\\$method";
+        // $this->service = $service;
 
-        // return (new $serviceName($this->configs, $args[0]))->handle();
+        // $serviceName = "Rascan\\Hela\\Services\\$service";
+
+        // (new $serviceName(array_merge($this->account, $args[0])))->handle();
     }
 }

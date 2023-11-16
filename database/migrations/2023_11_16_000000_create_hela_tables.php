@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -14,23 +15,22 @@ return new class extends Migration
         Schema::create('hela_logs', function (Blueprint $table) {
             $table->id();
             $table->string('log_uid')->unique();
-            $table->enum('outcome', ['success', 'failure']);
-            $table->unsignedInteger('code');
+            $table->string('service');
+            $table->boolean('success');
+            $table->enum('log_level', [
+                'emergency',
+                'alert',
+                'critical',
+                'error',
+                'warning',
+                'notice',
+                'informational',
+                'debug',
+            ]);
+            $table->unsignedInteger('status_code');
             $table->longText('message')->nullable();
-            // $table->json('request_metadata');
-
-            // {
-            //     'method': 'GET',
-            //     'url': '',
-            //     'data': '',
-            //     'queries': '',
-            //     'headers': '',
-            // }
-
-            // $table->string('email')->unique();
-            // $table->timestamp('email_verified_at')->nullable();
-            // $table->string('password');
-            // $table->rememberToken();
+            $table->json('request_details');
+            $table->json('payment_details')->nullable();
             $table->timestamps();
         });
     }
