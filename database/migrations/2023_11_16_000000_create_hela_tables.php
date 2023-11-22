@@ -16,12 +16,13 @@ return new class extends Migration
         Schema::create('hela_logs', function (Blueprint $table) {
             $table->id();
             $table->string('hela_log_uid')->unique();
-            $table->string('method')->index();
-            $table->string('service')->index();
-            $table->text('endpoint');
-            $table->json('payload');
-            $table->text('message');
             $table->boolean('status');
+            $table->string('service')->index();
+            $table->string('method')->index();
+            $table->text('endpoint');
+            $table->text('message');
+            $table->json('request_payload');
+            $table->json('service_response');
             $table->string('error_code')->nullable();
             $table->timestamps();
         });

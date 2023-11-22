@@ -52,7 +52,6 @@ class HelaServiceProvider extends ServiceProvider
         Event::listen(ResponseReceived::class, LogResponseReceived::class);
 
         Event::listen(ConnectionFailed::class, LogConnectionFailed::class);
-
     }
 
     /**

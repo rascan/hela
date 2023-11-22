@@ -13,18 +13,17 @@ trait AuthorizesRequests
     public function authorize () : string
     {
         return cache()->remember('hela_token', now()->addSeconds(3550), function () {
-            $consumerKey = $this->account['consumer_key'] ?? '';
-            $consumerSecret = $this->account['consumer_secret'] ?? '';
+            $key = $this->accoun['consumer_key'];
+            $secret = $this->accoun['consumer_secret'];
+            $accessToken = base64_encode("$key:$secret");
 
-            $authorizationUrl = $this->baseUrl() . '/oauth/v1/generate';
-            $accessToken = base64_encode("$consumerKey:$consumerSecret");
-
-            $response = Http::withHeaders([
-                'Authorization' => "Basic $accessToken",
-                'service' => 'Authorization',
-            ])->get($authorizationUrl, [
-                'grant_type' => 'client_credentials',
-            ]);
+            $response = Http::baseUrl($this->baseUrl())
+                ->withHeaders([
+                    'Authorization' => "Basic $accessToken",
+                    'service' => 'authorization',
+                ])->get('/oauth/v1/generate', [
+                    'grant_type' => 'client_credentials',
+                ]);
 
             abort_if($response->failed(), 401, $response->json('errorMessage', $response->getReasonPhrase()));
 

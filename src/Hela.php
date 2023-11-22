@@ -45,12 +45,27 @@ class Hela
     public function account (string $account = null) : self
     {
         $accountName = $account ?: $this->configs['default'] ?? 'sandbox';
+        $this->account = $this->configs['accounts'][$accountName] ?? null;
 
-        $this->account = $this->configs['accounts'][$accountName] ?? [];
+        dd($this->account);
 
-        if (is_null($this->account)) {
-            throw new \InvalidArgumentException("MPesa account [$accountName] not configured.");
-        }
+        // validator($this->account, [
+        //     'consumer_key' => [
+        //         'required'
+        //     ],
+        // ])->validate();
+
+        // if (is_null($this->account)) {
+        //     throw new \InvalidArgumentException("MPesa account [$accountName] not configured.");
+        // }
+
+        // if (!isset($this->account['consumer_key']) or !$this->account['consumer_key']) {
+        //     throw new \ErrorException("The consumer key is not provided.");
+        // }
+
+        // if (!isset($this->account['consumer_secret']) or !$this->account['consumer_secret']) {
+        //     throw new \ErrorException("The consumer secret is not provided.");
+        // }
 
         return $this;
     }
@@ -82,6 +97,6 @@ class Hela
 
         $response = Http::mpesa($name)->post($this->service->endpoint(), $this->service->payload());
 
-        dd($response->json());
+        return $response->json();
     }
 }
