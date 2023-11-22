@@ -7,10 +7,10 @@ use Illuminate\Http\Client\Events\ResponseReceived;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
-use Rascan\Hela\Facades\MPesa;
+use Rascan\Hela\Facades\Hela;
+use Rascan\Hela\Hela as HelaService;
 use Rascan\Hela\Listeners\LogConnectionFailed;
 use Rascan\Hela\Listeners\LogResponseReceived;
-use Rascan\Hela\MPesa as MPesaService;
 
 class HelaServiceProvider extends ServiceProvider
 {
@@ -31,9 +31,10 @@ class HelaServiceProvider extends ServiceProvider
             $this->bootForConsole();
         }
 
-        Http::macro('mpesa', function () {
-            Http::withToken(MPesa::authorize())
-                ->baseUrl(MPesa::baseUrl());
+        Http::macro('mpesa', function ($service) {
+            return Http::withToken(Hela::authorize())
+                ->withHeaders(compact('service'))
+                ->baseUrl(Hela::baseUrl());
         });
     }
 
@@ -46,11 +47,12 @@ class HelaServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/hela.php', 'hela');
 
+        $this->app->singleton('hela', fn () => new HelaService(config('hela')));
+
         Event::listen(ResponseReceived::class, LogResponseReceived::class);
 
         Event::listen(ConnectionFailed::class, LogConnectionFailed::class);
 
-        $this->app->singleton('mpesa', fn () => new MPesaService(config('hela')));
     }
 
     /**

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
 {
-    protected $table = 'hela_logs';
+    protected $table = "hela_logs";
 
     protected $guarded = [];
 }

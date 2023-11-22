@@ -2,72 +2,39 @@
 
 namespace Rascan\Hela\Services;
 
-class Express extends MPesaService
+class Express extends Service
 {
+    public function name () : string
+    {
+        return "M-Pesa Express";
+    }
+
+    public function endpoint () : string
+    {
+        return "mpesa/stkpush/v1/processrequest";
+    }
+
     public function payload () : array
     {
-        $businessShortCode = $this->inputs['business_short_code'];
+        $phone = $this->data['phone'];
+        $passkey = $this->data['passkey'];
+        $businessShortCode = $this->data['business_short_code'];
+
         $transactedAt = now()->format('YmdHis');
-        $passkey = $this->inputs['passkey'];
 
         return [
-            'BusinessShortCode' => $this->inputs['business_short_code'],
+            'hela_service' => 'M-Pesa Express',
+            'BusinessShortCode' => $businessShortCode,
             'Timestamp' => $transactedAt,
             'Password' => base64_encode("{$businessShortCode}{$passkey}{$transactedAt}"),
             'TransactionType' => 'CustomerPayBillOnline',
-            'Amount' => $this->inputs['amount'],
-            'PartyA' => $this->inputs['phone'],
+            'Amount' => $this->data['amount'],
+            'PartyA' => $this->data['phone'],
             'PartyB' => $businessShortCode,
-            'PhoneNumber' => $this->inputs['phone'],
-            'CallBackURL' => $this->inputs['callback'],
-            'AccountReference' => '',
-            'TransactionDesc' => '',
+            'PhoneNumber' => $phone,
+            'CallBackURL' => $this->data['callback'],
+            'AccountReference' => $this->data['reference'],
+            'TransactionDesc' => $this->data['comment'],
         ];
     }
-
-    public function rules () : array
-    {
-        dd($this->inputs);
-
-        return [
-            'business_short_code' => [
-                'required',
-            ],
-
-            'amount' => [
-                'required',
-            ],
-
-            'phone' => [
-                'required',
-            ],
-
-            'callback' => [
-                'required',
-            ],
-        ];
-    }
-
-    // public function handle ()
-    // {
-
-    //     // $shortCode = $this->configs['short_code'];
-    //     // $passkey = $this->configs['passkey'];
-
-    //     // $response = Http::mpesa()->post('mpesa/stkpush/v1/processrequest', [
-    //     //     'BusinessShortCode' => $shortCode,
-    //     //     'Timestamp' => $payload['transacted_at'],
-    //     //     'Password' => base64_encode("{$shortCode}{$passkey}{$payload['transacted_at']}"),
-    //     //     'TransactionType' => "CustomerPayBillOnline",
-    //     //     'Amount' => $payload['amount'],
-    //     //     'PartyA' => $payload['phone'],
-    //     //     'PartyB' => $shortCode,
-    //     //     'PhoneNumber' => $payload['phone'],
-    //     //     'CallBackURL' => $payload['callback_url'],
-    //     //     'AccountReference' => "TEST",
-    //     //     'TransactionDesc' => "Payment for Rascan",
-    //     // ]);
-
-    //     // return $response->json();
-    // }
 }

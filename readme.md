@@ -3,17 +3,34 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Build Status][ico-travis]][link-travis]
-[![StyleCI][ico-styleci]][link-styleci]
+<!-- [![StyleCI][ico-styleci]][link-styleci] -->
 
-This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
+Hela is a package that provides an elegant interface to interact with Safaricom's Daraja APIs. 
+<!-- This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list. -->
+
+## Requirements
+
+### PHP >= 8.2
+Hela uses modern PHP features that are only supported in PHP 8.2 and above.
+
+### Laravel >= 10
+Hela is a Laravel specific application and will only run inside of a laravel application. 
 
 ## Installation
 
-Via Composer
+In order to get started with Hela, you will need to pull the package using composer.
 
 ```bash
 composer require rascan/hela
 ```
+php artisan vendor:publish --provider="Rascan\Hela\HelaServiceProvider" --tag=config
+
+## Configuration
+
+### Publishing
+Publishing the configuration file
+
+### Defaults
 
 ## Usage
 

@@ -27,39 +27,51 @@
 
     <table>
         <thead>
+            <th>Method</th>
             <th>Service</th>
             <th>Status</th>
-            <th>Status code</th>
+            {{-- <th>Endpoint</th>
+            <th>Payload</th> --}}
+            {{-- <th>Error code</th> --}}
             <th>Message</th>
-            <th>Log level</th>
-            <th>Request details</th>
+            <th>Actions</th>
         </thead>
 
         <tbody>
             @foreach($logs as $log)
                 <tr>
                     <td>
-                        Authorization
+                        {{ $log->method }}
                     </td>
 
                     <td>
-                        {{ $log->success ? 'success' : 'failed' }}
+                        {{ $log->service }}
                     </td>
 
                     <td>
-                        {{ $log->status_code }}
+                        {{ $log->status ? 'success' : 'failed' }}
                     </td>
+
+                    {{-- <td>
+                        <pre>{{ $log->endpoint }}</pre>
+                    </td>
+
+                    <td>
+                        {{ $log->payload }}
+                    </td> --}}
+
+                    {{-- <td>
+                        {{ $log->error_code }}
+                    </td> --}}
 
                     <td>
                         {{ $log->message }}
                     </td>
 
                     <td>
-                        {{ $log->log_level }}
-                    </td>
-
-                    <td>
-                        {{ $log->request_details }}
+                        <button>
+                            View
+                        </button>
                     </td>
                 </tr>
             @endforeach
