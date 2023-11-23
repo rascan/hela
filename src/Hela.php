@@ -2,28 +2,35 @@
 
 namespace Rascan\Hela;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Rascan\Hela\Services\Service;
 
 class Hela
 {
-    use AuthorizesRequests,
-        ConstructService;
+    use AuthorizesRequests;
 
     /**
-     * The account configs being used to call Daraja APIs
+     * The test/sandbox base url for daraja services.
      *
      * @var array
      */
-    protected $account = [];
+    public const TEST_BASE_URL = 'https://sandbox.safaricom.co.ke';
 
     /**
-     * The service (Daraja API) that is currently being called
+     * The live/production base url for daraja services.
      *
-     * @var Service
+     * @var array
      */
-    protected Service $service;
+    public const LIVE_BASE_URL = 'https://api.safaricom.co.ke';
+
+    /**
+     * The app configs being used to call Daraja APIs
+     *
+     * @var array
+     */
+    protected $app = [];
 
     /**
      * Create a new hela instance.
@@ -31,41 +38,21 @@ class Hela
      * @param  array  $configs
      * @return void
      */
-    public function __construct(protected array $configs)
+    public function __construct()
     {
-        $this->account();
+        $this->app(config('hela.default'));
     }
 
     /**
-     * Sets the active MPesa account for subsequent requests
+     * Sets the active MPesa app for subsequent requests
      *
-     * @param  string  $account
+     * @param  string  $app
+     *
      * @return self
      */
-    public function account (string $account = null) : self
+    public function app (string $app)
     {
-        $accountName = $account ?: $this->configs['default'] ?? 'sandbox';
-        $this->account = $this->configs['accounts'][$accountName] ?? null;
-
-        dd($this->account);
-
-        // validator($this->account, [
-        //     'consumer_key' => [
-        //         'required'
-        //     ],
-        // ])->validate();
-
-        // if (is_null($this->account)) {
-        //     throw new \InvalidArgumentException("MPesa account [$accountName] not configured.");
-        // }
-
-        // if (!isset($this->account['consumer_key']) or !$this->account['consumer_key']) {
-        //     throw new \ErrorException("The consumer key is not provided.");
-        // }
-
-        // if (!isset($this->account['consumer_secret']) or !$this->account['consumer_secret']) {
-        //     throw new \ErrorException("The consumer secret is not provided.");
-        // }
+        $this->app = Arr::get(config('hela.apps'), $app);
 
         return $this;
     }
@@ -74,16 +61,18 @@ class Hela
      * Returns the base URL for accessing Daraja services
      *
      * @return string
+     *
+     * @throws \InvalidArgumentException
      */
-    public function baseUrl () : string
+    public function baseUrl ()
     {
-        $environment = $this->account['environment'] ?? 'test';
+        $environment = Arr::get($this->app, 'environment');
 
         if (!in_array($environment, ['test', 'live'])) {
-            throw new \InvalidArgumentException("Environment [$environment] is invalid.");
+            throw new \InvalidArgumentException("Environment [$environment] is invalid. Available options: 'test', 'live'");
         }
 
-        return $environment === 'live' ?  ConstantManager::LIVE_BASE_URL : ConstantManager::TEST_BASE_URL;
+        return $environment === 'live' ?  self::LIVE_BASE_URL : self::TEST_BASE_URL;
     }
 
     /**
@@ -91,11 +80,12 @@ class Hela
      */
     public function __call ($name, $args)
     {
-        $data = array_merge($this->account, $args[0]);
+        $data = array_merge($this->app, $args[0]);
 
-        $this->service = $this->service($name, $data);
+        $service = HelaService::service($name, $data);
 
-        $response = Http::mpesa($name)->post($this->service->endpoint(), $this->service->payload());
+        $response = Http::mpesa($service->name())
+            ->post($service->endpoint(), $service->payload());
 
         return $response->json();
     }

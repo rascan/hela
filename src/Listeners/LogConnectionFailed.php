@@ -15,10 +15,6 @@ class LogConnectionFailed
      */
     public function handle(ConnectionFailed $event)
     {
-        Log::info([$event->request->data(), $event->request->url()]);
 
-        // if ($event->user instanceof MustVerifyEmail && ! $event->user->hasVerifiedEmail()) {
-        //     $event->user->sendEmailVerificationNotification();
-        // }
     }
 }

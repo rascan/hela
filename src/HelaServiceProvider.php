@@ -47,7 +47,7 @@ class HelaServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/hela.php', 'hela');
 
-        $this->app->singleton('hela', fn () => new HelaService(config('hela')));
+        $this->app->singleton('hela', \Rascan\Hela\Hela::class);
 
         Event::listen(ResponseReceived::class, LogResponseReceived::class);
 

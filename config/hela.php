@@ -4,29 +4,42 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default MPesa Account
+    | Default MPesa Application
     |--------------------------------------------------------------------------
     |
-    | This is the account that shall be used to facilitate any transaction between
-    | Hela and Safaricom's Daraja service. The value provided needs to be one
-    | of the accounts that have been configured under the 'accounts' below.
+    | This is the app that shall be used to facilitate any transaction between
+    | Hela and Safaricom's Daraja services. The value provided needs to be
+    | one of the apps that have been configured under the 'apps' below.
     |
     */
 
-    'default' => env('MPESA_ACCOUNT', 'sandbox'),
+    'default' => env('MPESA_APP', 'sandbox'),
 
     /*
     |--------------------------------------------------------------------------
-    | MPesa Accounts
+    | Callback URL
     |--------------------------------------------------------------------------
     |
-    | You can configure all your MPesa accounts below. Hela has already configured
-    | two accounts for you for sandbox and production. Feel free to add more or
-    | change the names of the existing ones to suit your app's design needs
+    | This is the callback url that Safaricom will issue a request to once it
+    | has finished processing any long running request that has been queued
+    | for execution. It can be overriden when making a service call
     |
     */
 
-    'accounts' => [
+    'callback' => '/hela/callback',
+
+    /*
+    |--------------------------------------------------------------------------
+    | MPesa Applications
+    |--------------------------------------------------------------------------
+    |
+    | You can configure all your MPesa apps below. Hela has already configured
+    | two apps for you for sandbox and production. Feel free to add more or
+    | change the names of the existing ones to suit your own design needs.
+    |
+    */
+
+    'apps' => [
 
         'sandbox' => [
             'environment' => 'test',

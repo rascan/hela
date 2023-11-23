@@ -3,8 +3,6 @@
 namespace Rascan\Hela\Listeners;
 
 use Illuminate\Http\Client\Events\ResponseReceived;
-use Illuminate\Support\Facades\Log;
-use Rascan\Hela\Facades\MPesa;
 use Rascan\Hela\Models\Log as HelaLog;
 
 class LogResponseReceived
@@ -21,6 +19,8 @@ class LogResponseReceived
         $response = $event->response;
         $parts = parse_url($request->url());
 
+        $messageKey = $response->successful() ? 'ResponseDescription' : 'errorMessage';
+
         if (str($parts['host'])->endsWith('safaricom.co.ke'))
         {
             HelaLog::create([
@@ -29,9 +29,9 @@ class LogResponseReceived
                 'service' => $request->header('service')[0],
                 'endpoint' => $parts['path'],
                 'status' => $response->successful(),
-                'payload' => json_encode($request->data()),
-                'error_code' => $response->json('errorCode', null),
-                'message' => $response->json('errorMessage', $response->getReasonPhrase()),
+                'message' => $response->json($messageKey, $response->getReasonPhrase()),
+                'request_payload' => json_encode($request->data()),
+                'service_response' => json_encode($response->json()),
             ]);
         }
     }
