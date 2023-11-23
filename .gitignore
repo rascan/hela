@@ -1,4 +1,5 @@
 /vendor
+/public/hot
 /laravel
 /node_modules
 /public/app.js.LICENSE.txt

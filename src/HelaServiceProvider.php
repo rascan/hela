@@ -26,6 +26,7 @@ class HelaServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
+
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -82,9 +83,9 @@ class HelaServiceProvider extends ServiceProvider
         ], 'hela.views');*/
 
         // Publishing assets.
-        /*$this->publishes([
-            __DIR__.'/../resources/assets' => public_path('vendor/rascan'),
-        ], 'hela.assets');*/
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/hela'),
+        ], 'hela');
 
         // Publishing the translation files.
         /*$this->publishes([
